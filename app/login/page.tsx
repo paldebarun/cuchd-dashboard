@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { loginUser } from "@/lib/actions/loginUser.action";
+import toast from "react-hot-toast";
 
 interface iUser {
   userId: string;
@@ -24,29 +25,35 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const toastId=toast.loading("logging...")
     try {
       console.log("inside submit");
       const response = await loginUser(formData);
-      console.log("this is response of user login ", response);
+      const jsonresponse=JSON.parse(response);
 
-      if(response.role=='central_office')
+      console.log("this is response of user login ", response);
+      toast.success("login successfull");
+      toast.dismiss(toastId);
+      if(jsonresponse.role=='central_office')
       router.push("/dashboard/centralOffice");
 
-      if(response.role=="student_representative"){
-        router.push('/dashboard/studentRepresentative');
+      if(jsonresponse.role=="student_representative"){
+        router.push(`/dashboard/studentRepresentative/${jsonresponse.id}`);
       }
 
-      if(response.role=="faculty_advisor"){
+      if(jsonresponse.role=="faculty_advisor"){
         router.push('/dashboard/facultyAdvisor');
       }
     } catch (error) {
+        toast.dismiss(toastId);
+        toast.error("login error");
       console.log("the error while creating user is: ", error);
     }
   };
 
   return (
     <div className="w-full flex justify-center items-center h-screen">
-      <Card className="w-[500px] shadow-lime-400 shadow-md">
+      <Card className="w-[500px]  shadow-md">
         <CardHeader>
           <CardTitle>Login here</CardTitle>
           <CardDescription>Login to access the dashboard</CardDescription>

@@ -24,10 +24,10 @@ import { navdata } from './navdata'
 
 
 
-const page = () => {
+const page = ({params}:{params:{studentId:string}}) => {
   
     const router=useRouter();
-
+    const studentId=params.studentId;
   return (
     <div className="grid grid-cols-2 gap-2">
       
@@ -45,7 +45,7 @@ const page = () => {
                 navdata.map((element,index)=>(
                     <HoverCard key={index} >
                     <HoverCardTrigger>
-                        <Button onClick={()=>{router.push(`/dashboard/facultyAdvisor/${element.link}`)}} variant="link"> {element.tag}</Button>
+                        <Button onClick={()=>{router.push(`/dashboard/studentRepresentative/${studentId}/${element.link}`)}} variant="link"> {element.tag}</Button>
                        </HoverCardTrigger>
                     <HoverCardContent>
                       {element.description}

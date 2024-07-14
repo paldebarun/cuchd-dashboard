@@ -37,53 +37,74 @@ import {
   
 
 import { createClub, fetchClubDetails } from '@/lib/actions/club.action';
+import { createUser } from '@/lib/actions/saveUser.action';
+import mongoose from 'mongoose';
 
 interface IClubFormData {
     clubName: string;
     studentRepName: string;
     studentRepEmail: string;
     studentRepUid: string;
+   
+}
+
+const generateRandomPassword = () => {
+    const specialChars = "!@#$%^&*()_+{}:\"<>?|[];',./";
+    const numbers = "0123456789";
+    const alphabets = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const allChars = specialChars + numbers + alphabets;
+
+    let password = "";
+    password += specialChars[Math.floor(Math.random() * specialChars.length)];
+    password += numbers[Math.floor(Math.random() * numbers.length)];
+    password += alphabets[Math.floor(Math.random() * alphabets.length)];
+
+    for (let i = 0; i < 5; i++) {
+        password += allChars[Math.floor(Math.random() * allChars.length)];
+    }
+
+    return password.split('').sort(() => 0.5 - Math.random()).join('');
 }
 
 
-interface IClubFormat extends IClub {
-}
+
 
 const Page = () => {
 
     const router=useRouter();
-    const [data, setData] = useState<IClubFormat[]>([]); // Initialize with correct type
+    const [data, setData] = useState<IClub[]>([]); 
 
     useEffect(() => {
-        const toastid=toast.loading("Loading club details...")
         const fetchData = async () => {
-            
+            const toastid = toast.loading("Loading club details...");
             try {
                 const clubData = await fetchClubDetails();
                 if (clubData) {
-                    const parsedData = JSON.parse(clubData) as IClubFormat[];
+                    const parsedData = JSON.parse(clubData) as IClub[];
                     setData(parsedData);
                     console.log("These are the clubs", parsedData);
-                   
                 } else {
-                    toast("No clubs")
+                    toast("No clubs");
                     setData([]);
                 }
-                toast.dismiss(toastid);
-                
             } catch (error) {
-                toast.error("error");
+                
+                toast.error("Error while fetching club details");
                 console.log("Error while fetching club details: ", error);
+            } finally {
+                toast.dismiss(toastid);
             }
         };
         fetchData();
     }, []);
+    
 
     const [formData, setFormData] = useState<IClubFormData>({
         clubName: "",
         studentRepName: "",
         studentRepEmail: "",
         studentRepUid: ""
+        
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,7 +117,34 @@ const Page = () => {
         console.log(formData);
         const taostId =toast.loading("processing...");
         try {
-            const createClubResponse = await createClub(formData);
+
+            const password = generateRandomPassword();
+            const userObject={
+                userId:formData.studentRepUid,
+                password:password,
+                role:"student_representative"
+            }
+
+            const userCreationResponse=await createUser(userObject);
+            const jsonuser=JSON.parse(userCreationResponse);
+            console.log("user id : ",typeof jsonuser._id);
+
+            const ClubObject={
+                clubName:formData.clubName,
+                studentRepName:formData.studentRepName,
+                studentRepEmail:formData.studentRepEmail,
+                studentRepUid:formData.studentRepUid,
+                studentRepId:new mongoose.Types.ObjectId(jsonuser._id)
+            }
+            
+            const createClubResponse = await createClub(ClubObject);
+           
+            
+           
+
+            console.log("this is user response : ",userCreationResponse);
+
+
             const jsonparsedData=JSON.parse(createClubResponse) as IClubFormat;
             setData(prevData => [...prevData, jsonparsedData]); 
             console.log("this is club response : ", createClubResponse);
@@ -110,7 +158,8 @@ const Page = () => {
           toast.dismiss(taostId);
            toast.success("successfully created club")  ; 
         } catch (error) {
-            toast.error("error while creating taost");
+            toast.dismiss(taostId);
+            toast.error(`${error}`);
             console.log("the error is : ", error);
         }
     };

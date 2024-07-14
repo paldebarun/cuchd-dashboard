@@ -7,26 +7,25 @@ interface iUser {
   password: string;
 }
 
-interface returnlogin{
-    userId: string;
-  role: string;
-  createdAt:Date;
-}
 
-export async function loginUser(data: iUser):Promise<returnlogin> {
+
+export async function loginUser(data: iUser):Promise<string> {
   try {
     await connectToDb();
     const { userId, password } = data;
     
    
     const user = await User.findOne({ userId, password }).lean().exec();
-    console.log("this is user : ",user);
+    console.log("this is user : ", typeof user);
     if (!user) {
       throw new Error("Invalid userId or password");
     }
 
 
-    return { userId: user.userId, role: user.role, createdAt: user.createdAt };
+    const obj= { id:user._id,userId: user?.userId, role: user?.role, createdAt: user?.createdAt };
+
+    return JSON.stringify(obj);
+
   } catch (error) {
     console.error("The error while logging in the user:", error);
     throw new Error("Login error");

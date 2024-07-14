@@ -56,3 +56,20 @@ export async function deleteClubById(_id:mongoose.Types.ObjectId){
     console.log("error occured while deleting the club",error);
   }
 }
+
+
+export async function fetchClubByStudentID(studentID:string){
+  try{
+   await connectToDb();
+
+   const club=await Club.findOne({studentRepIdnew: new mongoose.Types.ObjectId(studentID)});
+
+   console.log("the club fetched by student id : ",club);
+   return JSON.stringify(club);
+
+
+  }
+  catch(error){
+    console.log("club couldn't be fetched due to an error : ",error);
+  }
+}

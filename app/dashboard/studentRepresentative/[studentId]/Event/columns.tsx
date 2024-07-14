@@ -13,10 +13,11 @@ import { MoreHorizontal } from "lucide-react";
 
 export type Events = {
   _id: string;
-  EventName: string;
+  eventName: string;
   description: string;
   organizer: string;
   date: string;
+  approved:boolean;
 };
 import { deleteEventById } from "@/lib/actions/events.action";
 
@@ -29,7 +30,7 @@ export const columns: ColumnDef<Events>[] = [
 
    
   {
-    accessorKey: "EventName",
+    accessorKey: "eventName",
     header: "Event name",
   },
   {
@@ -43,7 +44,11 @@ export const columns: ColumnDef<Events>[] = [
   
   {
     accessorKey: "date",
-    header: "Created At",
+    header: "Date of event",
+  },
+  {
+    accessorKey: "approved",
+    header: "Approved",
   },
   {
     id: "actions",
@@ -64,8 +69,8 @@ export const columns: ColumnDef<Events>[] = [
 
         try {
             
-          const deletedClub=await deleteEventById(new mongoose.Types.ObjectId(event._id));
-          console.log("this id delete response : ",deletedClub);
+          const deletedEvent=await deleteEventById(new mongoose.Types.ObjectId(event._id));
+          console.log("this id delete response : ",deletedEvent);
           toast.dismiss(toastId);
           toast.success("successfully deleted");
 

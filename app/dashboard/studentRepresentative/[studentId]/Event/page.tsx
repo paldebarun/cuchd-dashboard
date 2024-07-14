@@ -5,7 +5,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
-import { createEvent,fetchEventsOfAParticularClub } from "@/lib/actions/events.action";
+import { createEvent, fetchEventsOfAParticularClub } from "@/lib/actions/events.action";
 import {
   Popover,
   PopoverContent,
@@ -18,7 +18,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-
+import toast from "react-hot-toast";
 import {
   Dialog,
   DialogContent,
@@ -57,7 +57,7 @@ import { columns } from "./columns";
 const Page = ({ params }: { params: { studentId: string } }) => {
   const router = useRouter();
   const studentId = params.studentId;
-  const [club,setClub]=useState<IClub>();
+  const [club, setClub] = useState<IClub>();
   const [date, setDate] = useState<Date>();
   const [formData, setFormData] = useState({
     eventName: "",
@@ -68,39 +68,42 @@ const Page = ({ params }: { params: { studentId: string } }) => {
     feature: false,
     approved: false,
   });
-  
-  const [events,setEvents]=useState<iEvent>();
+
+  const [events, setEvents] = useState<iEvent[]>([]);
 
   useEffect(() => {
-     async function func(){
-      {
-       try{
-        const fetchedClubofThisStudentRep = await fetchClubByStudentID(
-            studentId
-          );
+    
+    async function func() {
+        const toastId=toast.loading("fetching ...");
+      try {
+        const fetchedClubofThisStudentRep = await fetchClubByStudentID(studentId);
 
+        if (fetchedClubofThisStudentRep) {
           const jsonClub = JSON.parse(fetchedClubofThisStudentRep);
-        
           setClub(jsonClub);
-          
-          const events=await fetchEventsOfAParticularClub(jsonClub._id);
-          const jsonEvents=JSON.parse(events);
 
-          console.log("events : ",events);
-          
-          setEvents(jsonEvents);
+          const fetchedEvents = await fetchEventsOfAParticularClub(jsonClub._id);
 
-       }
-       catch(error){
-        console.log("there was an error while fetching club and events",error)
-       }
+          if (fetchedEvents) {
+            const jsonEvents = JSON.parse(fetchedEvents);
+            console.log("events : ", jsonEvents);
+            setEvents(jsonEvents);
+          } else {
+            console.error("No events data found for this club.");
+          }
+        } else {
+          console.error("No club data found for this student ID.");
+        }
+
+        toast.dismiss(toastId);
+      } catch (error) {
+        toast.dismiss(toastId);
+        console.log("There was an error while fetching club and events", error);
       }
-
     }
 
     func();
-  }, [])
-  
+  }, [studentId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value, type, checked, files } = e.target;
@@ -122,6 +125,7 @@ const Page = ({ params }: { params: { studentId: string } }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const toastId=toast.loading("Please wait...")
     const eventData = {
       ...formData,
       date,
@@ -132,28 +136,53 @@ const Page = ({ params }: { params: { studentId: string } }) => {
     console.log(eventData);
 
     try {
-     
+      if (club && club._id) {
+        const finalEventData = {
+          eventName: eventData.eventName,
+          description: eventData.description,
+          image: eventData.image,
+          approved: eventData.approved,
+          feature: eventData.feature,
+          date: eventData.date,
+          organizer: eventData.organizer,
+          seats: eventData.seats,
+          club: new mongoose.Types.ObjectId(club._id),
+        };
 
-      const finalEventData={
-        eventName:eventData.eventName,
-        description:eventData.description,
-        image:eventData.image,
-        approved:eventData.approved,
-        feature:eventData.feature,
-        date:eventData.date, 
-        organizer:eventData.organizer,
-        seats:eventData.seats,
-        club:new mongoose.Types.ObjectId(club?._id)
+        const eventCreationResponse = await createEvent(finalEventData);
+
+        if(eventCreationResponse){
+
+        console.log("this is event response : ", eventCreationResponse);
+
+        const jsonEvent=JSON.parse(eventCreationResponse);
+        
+        setEvents((prevEvents) => [...prevEvents,jsonEvent]);
+        
+        setFormData({
+            eventName: "",
+            description: "",
+            picture: null,
+            organizer: "",
+            seats: 0,
+            feature: false,
+            approved: false,
+          });
+          setDate(undefined);
+    } 
+    toast.success("Event created");
+     
+      } else {
+        toast.error("Enter the data properly");
+        console.error("Club data is not available.");
       }
 
-      const eventCreationResponse=await createEvent(finalEventData);
-      
-      console.log("this is event response : ",eventCreationResponse);
-      
-      console.log("and this are all the events : ",events);
-      
-      
-    } catch (error) {}
+      toast.dismiss(toastId);
+    } catch (error) {
+        toast.dismiss(toastId);
+        toast.error("Error ! try again");
+      console.error("There was an error creating the event", error);
+    }
   };
 
   return (
@@ -168,7 +197,7 @@ const Page = ({ params }: { params: { studentId: string } }) => {
         </SheetTrigger>
         <SheetContent side={"left"}>
           <SheetHeader>
-            <SheetTitle>Navigate</SheetTitle>
+            <SheetTitle>{club?.clubName} club</SheetTitle>
           </SheetHeader>
           <div className="flex flex-col gap-10 pt-10">
             {navdata.map((element, index) => (
@@ -190,7 +219,7 @@ const Page = ({ params }: { params: { studentId: string } }) => {
         </SheetContent>
       </Sheet>
 
-      <div className="px-10 py-5">
+      <div className="px-10 py-5 w-screen flex justify-end">
         <Dialog>
           <DialogTrigger asChild>
             <Button>Create Event</Button>
@@ -306,7 +335,7 @@ const Page = ({ params }: { params: { studentId: string } }) => {
           </DialogContent>
         </Dialog>
       </div>
-      {/* <DataTable columns={columns} data={events} /> */}
+      <DataTable columns={columns} data={events} />
     </div>
   );
 };

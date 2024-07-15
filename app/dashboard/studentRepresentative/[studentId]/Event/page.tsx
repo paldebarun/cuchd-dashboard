@@ -219,7 +219,7 @@ const Page = ({ params }: { params: { studentId: string } }) => {
       console.log('FormData:', formData);
       
       const response = await axios.post(
-        'http://localhost:4000/api/v1/uploadImage',
+        'https://file-uploading-server.onrender.com/api/v1/uploadImage',
         formData,  
       );
       

@@ -1,5 +1,5 @@
 "use client";
-
+import axios from 'axios'
 import React, { useEffect, useState } from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -126,17 +126,24 @@ const Page = ({ params }: { params: { studentId: string } }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const toastId=toast.loading("Please wait...")
-    const eventData = {
-      ...formData,
-      date,
-      studentID: studentId,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVjDZFET4jdrT92jx3JGDykSazDj6fzZ6M4Q&s",
-    };
-    console.log(eventData);
-
     try {
+       
+
+
       if (club && club._id) {
+       
+       const url= await uploadFile();
+
+     
+       const eventData = {
+         ...formData,
+         date,
+         studentID: studentId,
+         image:url,
+       };
+       console.log(eventData);
+   
+
         const finalEventData = {
           eventName: eventData.eventName,
           description: eventData.description,
@@ -182,6 +189,51 @@ const Page = ({ params }: { params: { studentId: string } }) => {
         toast.dismiss(toastId);
         toast.error("Error ! try again");
       console.error("There was an error creating the event", error);
+    }
+  };
+
+
+  const [watchedFile,setwatchfile] = useState(null);
+
+  const handleFileChange = (event:React.FormEvent<HTMLFormElement>) => {
+    console.log('File selected:', event.target.files[0]);
+    const file = event.target.files[0];
+    if (file instanceof File) {
+      const reader = new FileReader();
+
+     
+      reader.readAsDataURL(file);
+
+    
+      setwatchfile(file);
+      
+     
+    }
+  };
+
+  const uploadFile = async () => {
+    try {
+      
+      const formData = new FormData();
+      formData.append('imageFile', watchedFile); 
+      console.log('FormData:', formData);
+      
+      const response = await axios.post(
+        'http://localhost:4000/api/v1/uploadImage',
+        formData,  
+      );
+      
+  
+      console.log('Image uploaded to Cloudinary:', response);
+      const url = response.data.imageUrl;
+      console.log("this is url : ",url);
+      
+     return url;
+    } 
+    catch (error) {
+    
+      console.error('Error uploading image : ', error);
+      
     }
   };
 
@@ -258,7 +310,7 @@ const Page = ({ params }: { params: { studentId: string } }) => {
 
                     <div className="flex flex-col space-y-1.5">
                       <Label htmlFor="picture">Picture</Label>
-                      <Input id="picture" type="file" onChange={handleChange} />
+                      <Input id="picture" type="file" onChange={handleFileChange} />
                     </div>
 
                     <div className="flex flex-col space-y-1.5">

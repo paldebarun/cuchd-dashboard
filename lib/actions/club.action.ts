@@ -79,7 +79,7 @@ export async function fetchClubByStudentID(studentID:string){
   try{
    await connectToDb();
 
-   const club=await Club.findOne({studentRepIdnew: new mongoose.Types.ObjectId(studentID)});
+   const club=await Club.findOne({studentRepId: new mongoose.Types.ObjectId(studentID)});
 
    console.log("the club fetched by student id : ",club);
    return JSON.stringify(club);

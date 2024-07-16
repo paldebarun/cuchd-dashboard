@@ -41,7 +41,7 @@ export default function Login() {
         router.push(`/dashboard/studentRepresentative/${jsonresponse.id}`);
       }
 
-      if(jsonresponse.role=="faculty_advisor"){
+      if(jsonresponse.role=="Faculty_Advisor"){
         router.push('/dashboard/facultyAdvisor');
       }
     } catch (error) {

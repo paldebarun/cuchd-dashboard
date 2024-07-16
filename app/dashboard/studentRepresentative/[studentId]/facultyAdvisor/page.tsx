@@ -13,7 +13,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/h
 import { useRouter } from "next/navigation";
 import { navdata } from '../navdata';
 import { IClub } from '@/model/club.model';
-import { fetchClubByStudentID,updateClub } from '@/lib/actions/club.action';
+import { fetchClubByStudentID, updateClub } from '@/lib/actions/club.action';
 import { toast } from 'react-hot-toast';
 import {
   Dialog,
@@ -71,11 +71,11 @@ const Page = ({ params }: { params: { studentId: string } }) => {
           const jsonClub = JSON.parse(fetchedClubOfThisStudentRep);
           setClub(jsonClub);
 
-          if (club?.facultyAdvUid && club?.facultyAdvId && club?.facultyAdvName) {
+          if (jsonClub?.facultyAdvUid && jsonClub?.facultyAdvId && jsonClub?.facultyAdvName) {
             setFacultyAdvCreated(true);
             setFacultyAdv({
-              facultyAdvName: club.facultyAdvName,
-              facultyAdvUid: club.facultyAdvUid,
+              facultyAdvName: jsonClub.facultyAdvName,
+              facultyAdvUid: jsonClub.facultyAdvUid,
             });
           }
         } else {
@@ -98,35 +98,38 @@ const Page = ({ params }: { params: { studentId: string } }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const toastId=toast.loading('creating...');
-    try{
-      const password=generateRandomPassword();
-            const userCreationResponse=await createUser({
-            userId:formData.facultyAdvUid,
-            password:password,
-            role:"Faculty_Advisor"
-            });
+    const toastId = toast.loading('creating...');
+    try {
+      const password = generateRandomPassword();
+      const userCreationResponse = await createUser({
+        userId: formData.facultyAdvUid,
+        password: password,
+        role: "Faculty_Advisor"
+      });
 
-            const jsonuser=JSON.parse(userCreationResponse);
-            
-            const updateClubResponse = await updateClub(new mongoose.Types.ObjectId(club?._id), {
-              facultyAdvId: jsonuser._id,
-              
-              facultyAdvName: formData.facultyAdvName,
-              facultyAdvUid: formData.facultyAdvUid
-            });
-           
+      const jsonUser = JSON.parse(userCreationResponse);
 
-            
-            toast.dismiss(toastId);
-            toast.success("Faculty advisor created successfully")
+      const updateClubResponse = await updateClub(new mongoose.Types.ObjectId(club?._id), {
+        facultyAdvId: jsonUser._id,
+        facultyAdvName: formData.facultyAdvName,
+        facultyAdvUid: formData.facultyAdvUid
+      });
 
-            router.refresh();
+      setFacultyAdvCreated(true);
+      setFacultyAdv({
+        facultyAdvName: formData.facultyAdvName,
+        facultyAdvUid: formData.facultyAdvUid,
+      });
+
+      toast.dismiss(toastId);
+      toast.success("Faculty advisor created successfully");
+
+      router.refresh();
+    } catch (error) {
+      toast.dismiss(toastId);
+      toast.error("Error creating faculty advisor");
+      console.log("Error creating faculty advisor:", error);
     }
-    catch(error){
-      console.log("this is error while creating faculty advisor")
-    }
-    console.log("Form Data: ", formData);
   };
 
   return (

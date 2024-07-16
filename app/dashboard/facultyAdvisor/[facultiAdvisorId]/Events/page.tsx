@@ -18,13 +18,13 @@ const page = ({params}:{params:{facultiAdvisorId:string}}) => {
         try{
 
           const events=await fetchEventsToApproveByFacultyAdvisor(new mongoose.Types.ObjectId(facultyAdvisorId));
-          
+          if(events){
           const jsonEvents=JSON.parse(events);
 
           console.log("these are the events : ",jsonEvents);
 
           setEvents(jsonEvents);
-
+          }
         }
         catch(error){
           console.log("couldn't fetch the events",error);

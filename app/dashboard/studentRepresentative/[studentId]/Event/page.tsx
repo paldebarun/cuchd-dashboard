@@ -193,7 +193,7 @@ const Page = ({ params }: { params: { studentId: string } }) => {
   };
 
 
-  const [watchedFile,setwatchfile] = useState(null);
+  const [watchedFile,setwatchfile] = useState<File>();
 
   const handleFileChange = (event:React.FormEvent<HTMLFormElement>) => {
     console.log('File selected:', event.target.files[0]);
@@ -215,6 +215,7 @@ const Page = ({ params }: { params: { studentId: string } }) => {
     try {
       
       const formData = new FormData();
+      if(watchedFile){
       formData.append('imageFile', watchedFile); 
       console.log('FormData:', formData);
       
@@ -229,6 +230,7 @@ const Page = ({ params }: { params: { studentId: string } }) => {
       console.log("this is url : ",url);
       
      return url;
+      }
     } 
     catch (error) {
     

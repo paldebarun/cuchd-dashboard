@@ -31,7 +31,7 @@ export default function Login() {
       const response = await loginUser(formData);
       const jsonresponse=JSON.parse(response);
 
-      console.log("this is response of user login ", response);
+      console.log("this is response of user login ", jsonresponse);
       toast.success("login successfull");
       toast.dismiss(toastId);
       if(jsonresponse.role=='central_office')
@@ -42,7 +42,7 @@ export default function Login() {
       }
 
       if(jsonresponse.role=="Faculty_Advisor"){
-        router.push(`/dashboard/facultyAdvisor/${jsonresponse._id}`);
+        router.push(`/dashboard/facultyAdvisor/${jsonresponse.id}`);
       }
     } catch (error) {
         toast.dismiss(toastId);

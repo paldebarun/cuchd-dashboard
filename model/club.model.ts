@@ -6,6 +6,9 @@ export interface IClub extends Document {
     studentRepEmail: string;
     studentRepUid: string;
     studentRepId:mongoose.Types.ObjectId;
+    facultyAdvId:mongoose.Types.ObjectId;
+    facultyAdvName:string;
+    facultyAdvUid:string;
 }
 
 const ClubSchema = new Schema<IClub>(
@@ -14,7 +17,10 @@ const ClubSchema = new Schema<IClub>(
         studentRepName: { type: String, required: true },
         studentRepEmail: { type: String, required: true },
         studentRepUid: { type: String, required: true },
-        studentRepId:{type:mongoose.Schema.Types.ObjectId, ref:"User"}
+        studentRepId: {type:mongoose.Schema.Types.ObjectId, ref:"User"},
+        facultyAdvId: {type:mongoose.Schema.Types.ObjectId, ref:"User"},
+        facultyAdvName: {type:String,required: true },
+        facultyAdvUid: {type:String,required: true }
     },
     { timestamps: { createdAt: true, updatedAt: true } }
 );

@@ -11,6 +11,12 @@ interface IClub  {
     studentRepUid: string;
 }
 
+interface IFaculty {
+
+  facultyAdvName: string;
+  facultyAdvUid: string;
+  facultyAdvId: mongoose.Types.ObjectId;
+}
 
 export async function createClub(data:IClub){
   
@@ -25,6 +31,17 @@ export async function createClub(data:IClub){
         console.log("the internal server error is : ",error);
 
     }
+}
+
+export async function updateClub(id:mongoose.Types.ObjectId,data:IFaculty){
+  
+  try {
+    await connectToDb();
+    const updatedClub = await Club.findByIdAndUpdate(id, data, { new: true }).exec();
+    return JSON.stringify(updatedClub);
+} catch (error) {
+    console.log("the internal server error is : ", error);
+}
 }
 
 

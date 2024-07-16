@@ -134,7 +134,10 @@ const Page = () => {
                 studentRepName:formData.studentRepName,
                 studentRepEmail:formData.studentRepEmail,
                 studentRepUid:formData.studentRepUid,
-                studentRepId:new mongoose.Types.ObjectId(jsonuser._id)
+                studentRepId:new mongoose.Types.ObjectId(jsonuser._id),
+                facultyAdvId:null,
+                facultyAdvName:"not yet created",
+                facultyAdvUid:"not yet created"
             }
             
             const createClubResponse = await createClub(ClubObject);

@@ -257,7 +257,7 @@ const Page = ({ params }: { params: { studentId: string } }) => {
                 <HoverCardTrigger>
                   <Button
                     onClick={() => {
-                      router.push(`/dashboard/centralOffice/${element.link}`);
+                      router.push(`/dashboard/studentRepresentative/${studentId}/${element.link}`);
                     }}
                     variant="link"
                   >

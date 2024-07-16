@@ -219,8 +219,8 @@ const Page = ({ params }: { params: { studentId: string } }) => {
       )}
 
       {facultyAdvCreated && (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="p-4">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden px-10">
+          <div className="p-4 ">
             <h2 className="text-xl font-bold mb-5">{facultyAdv?.facultyAdvName}</h2>
             <h2 className="text-md mb-5">{facultyAdv?.facultyAdvUid}</h2>
             <div className="flex gap-5 justify-end">

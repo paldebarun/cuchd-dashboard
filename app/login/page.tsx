@@ -42,7 +42,7 @@ export default function Login() {
       }
 
       if(jsonresponse.role=="Faculty_Advisor"){
-        router.push('/dashboard/facultyAdvisor');
+        router.push(`/dashboard/facultyAdvisor/${jsonresponse._id}`);
       }
     } catch (error) {
         toast.dismiss(toastId);

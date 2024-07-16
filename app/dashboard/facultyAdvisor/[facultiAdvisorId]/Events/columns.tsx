@@ -25,7 +25,7 @@ import { AlertModal } from "@/components/alert-modal";
 import { useState } from "react";
 import mongoose from "mongoose";
 import toast from "react-hot-toast";
-
+import { updateEventById } from "@/lib/actions/events.action";
 
 export const columns: ColumnDef<Events>[] = [
 
@@ -56,9 +56,19 @@ export const columns: ColumnDef<Events>[] = [
     cell: ({ row }) => {
       const event = row.original;
 
-      const handleOpenClick = () => {
+      const handleOpenClick = async() => {
         console.log("Open clicked for Event:", event);
-        
+        try{
+         const updatedEvent=await updateEventById(new mongoose.Types.ObjectId(event._id),{
+            approved:true
+         });
+
+         console.log("the updated event is : ",updatedEvent);
+         
+        }
+        catch(error){
+            console.log("an error while approving evnt is : ",error);
+        }
       };
 
      
@@ -103,11 +113,11 @@ export const columns: ColumnDef<Events>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={handleOpenClick}>Open</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleOpenClick}>Approve</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit</DropdownMenuItem>
             
-                <DropdownMenuItem onClick={() => setOpen(true)}>Delete</DropdownMenuItem>
+            
+               
               
           </DropdownMenuContent>
         </DropdownMenu>

@@ -41,7 +41,7 @@ export async function fetchEvents(){
 
     try{
     
-        const eventresponse=await Event.find();
+        const eventresponse=await Event.find().populate('club');
 
         return JSON.stringify(eventresponse);
 

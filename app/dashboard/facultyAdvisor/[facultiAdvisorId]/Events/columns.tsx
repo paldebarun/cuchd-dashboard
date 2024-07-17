@@ -24,8 +24,7 @@ export type Events = {
 };
 import { deleteEventById } from "@/lib/actions/events.action";
 import { useRouter } from "next/navigation";
-import { AlertModal } from "@/components/alert-modal";
-import { useState } from "react";
+
 import mongoose from "mongoose";
 import toast from "react-hot-toast";
 import { updateEventById } from "@/lib/actions/events.action";

@@ -33,7 +33,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Button } from "@/components/ui/button";
-import { IoMenuOutline } from "react-icons/io5";
+import { IoAddOutline, IoMenuOutline } from "react-icons/io5";
 import { navdata } from "../navdata";
 import { useRouter } from "next/navigation";
 import {
@@ -276,7 +276,12 @@ const Page = ({ params }: { params: { studentId: string } }) => {
       <div className="px-10 py-5 w-screen flex justify-end">
         <Dialog>
           <DialogTrigger asChild>
-            <Button>Create Event</Button>
+          <Button>
+                                <div className='flex justify-center items-center gap-2'>
+                                    <IoAddOutline className='text-xl'/>
+                                    <p>Create Event</p>
+                                </div>
+                                </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>

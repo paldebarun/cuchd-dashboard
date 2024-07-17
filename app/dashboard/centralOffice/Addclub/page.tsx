@@ -34,7 +34,7 @@ import {
     
   
  import toast from 'react-hot-toast';
-  
+ import { IoAddOutline } from "react-icons/io5";
 
 import { createClub, fetchClubDetails } from '@/lib/actions/club.action';
 import { createUser } from '@/lib/actions/saveUser.action';
@@ -142,13 +142,14 @@ const Page = () => {
             
             const createClubResponse = await createClub(ClubObject);
            
+            if(createClubResponse){
             
            
 
             console.log("this is user response : ",userCreationResponse);
 
 
-            const jsonparsedData=JSON.parse(createClubResponse) as IClubFormat;
+            const jsonparsedData=JSON.parse(createClubResponse) ;
             setData(prevData => [...prevData, jsonparsedData]); 
             console.log("this is club response : ", createClubResponse);
             setFormData({ 
@@ -159,7 +160,7 @@ const Page = () => {
             });
 
           toast.dismiss(taostId);
-           toast.success("successfully created club")  ; 
+           toast.success("successfully created club")  ;} 
         } catch (error) {
             toast.dismiss(taostId);
             toast.error(`${error}`);
@@ -203,7 +204,12 @@ const Page = () => {
                 <div className='px-10 py-5'>
                     <Dialog>
                         <DialogTrigger asChild>
-                            <Button>Create Club</Button>
+                            <Button>
+                                <div className='flex justify-center items-center gap-2'>
+                                    <IoAddOutline className='text-xl'/>
+                                    <p>Create Club</p>
+                                </div>
+                                </Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>

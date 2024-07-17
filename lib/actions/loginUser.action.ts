@@ -21,7 +21,7 @@ export async function loginUser(data: iUser):Promise<string> {
       throw new Error("Invalid userId or password");
     }
 
-
+    
     const obj= { id:user._id,userId: user?.userId, role: user?.role, createdAt: user?.createdAt };
 
     return JSON.stringify(obj);

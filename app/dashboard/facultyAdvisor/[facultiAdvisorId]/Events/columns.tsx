@@ -1,6 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+
 import { MoreHorizontal } from "lucide-react";
 
 export type Events = {
@@ -20,7 +23,7 @@ export type Events = {
   approved:boolean;
 };
 import { deleteEventById } from "@/lib/actions/events.action";
-
+import { useRouter } from "next/navigation";
 import { AlertModal } from "@/components/alert-modal";
 import { useState } from "react";
 import mongoose from "mongoose";
@@ -28,7 +31,8 @@ import toast from "react-hot-toast";
 import { updateEventById } from "@/lib/actions/events.action";
 
 export const columns: ColumnDef<Events>[] = [
-
+  
+ 
    
   {
     accessorKey: "eventName",
@@ -56,6 +60,8 @@ export const columns: ColumnDef<Events>[] = [
     cell: ({ row }) => {
       const event = row.original;
 
+      const router=useRouter();
+
       const handleOpenClick = async() => {
         console.log("Open clicked for Event:", event);
         try{
@@ -71,38 +77,37 @@ export const columns: ColumnDef<Events>[] = [
         }
       };
 
+
+      const rejectEvent=async ()=>{
+        const toastId=toast.loading("deletion in progress...")
+        try{
+           
+          const deletResponse=await deleteEventById(new mongoose.Types.ObjectId(event._id));
+
+          console.log("this is delete response : ",deletResponse);
+           
+          toast.success("event rejected");
+
+          router.refresh();
+      
+        }
+        catch(error){
+         console.log("the error is : ",error);
+         toast.error("event couldn't be rejected, error !");
+        }
+        finally{
+          toast.dismiss(toastId);
+        }
+      }
+
      
 
-      const [open, setOpen] = useState(false);
-      const [loading, setLoading] = useState(false);
-      const onConfirm = async () => {
-        const toastId=toast.loading("deleting...");
+      
 
-        try {
-            
-          const deletedEvent=await deleteEventById(new mongoose.Types.ObjectId(event._id));
-          console.log("this id delete response : ",deletedEvent);
-          toast.dismiss(toastId);
-          toast.success("successfully deleted");
-
-        } catch (error) {
-         toast.dismiss(toastId);
-         toast.error("can't be deleted");
-         console.log("there has been an error : ",error);
-        } finally {
-          setOpen(false);
-          setLoading(false);
-        }
-      };
+     
       return (
         <div>
 
-       <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onConfirm}
-        loading={loading}
-      />
             
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -114,6 +119,7 @@ export const columns: ColumnDef<Events>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem onClick={handleOpenClick}>Approve</DropdownMenuItem>
+            <DropdownMenuItem onClick={rejectEvent}>Reject</DropdownMenuItem>
             <DropdownMenuSeparator />
             
             

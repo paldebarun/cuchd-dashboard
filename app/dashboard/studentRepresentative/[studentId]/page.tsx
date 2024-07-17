@@ -8,7 +8,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-
+import { IoMenuOutline } from "react-icons/io5";
 import {
     HoverCard,
     HoverCardContent,
@@ -25,7 +25,7 @@ import { navdata } from './navdata'
 
 
 const page = ({params}:{params:{studentId:string}}) => {
-  
+    
     const router=useRouter();
     const studentId=params.studentId;
   return (
@@ -33,7 +33,9 @@ const page = ({params}:{params:{studentId:string}}) => {
       
         <Sheet >
           <SheetTrigger asChild>
-            <Button variant="outline" size={"sm"}>{"Menu"}</Button>
+          <div className=' px-6'>
+            <Button variant="outline"  size={"icon"}><IoMenuOutline className='text-xl'/></Button>
+            </div>
           </SheetTrigger>
           <SheetContent side={"left"}>
             <SheetHeader>

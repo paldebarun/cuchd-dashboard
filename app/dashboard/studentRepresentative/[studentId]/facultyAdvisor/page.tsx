@@ -8,7 +8,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from '@/components/ui/button';
-import { IoMenuOutline } from 'react-icons/io5';
+import { IoAddOutline, IoMenuOutline } from 'react-icons/io5';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { useRouter } from "next/navigation";
 import { navdata } from '../navdata';
@@ -27,8 +27,12 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { createUser } from '@/lib/actions/saveUser.action';
 import mongoose from 'mongoose';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
+import { AlertModal } from '@/components/alert-modal';
+import { deleteFacultyAdvisor } from '@/lib/actions/faculty.action';
 
 interface IFacultyAdv {
+  facultyAdvId:string,
   facultyAdvName: string,
   facultyAdvUid: string,
 }
@@ -55,9 +59,10 @@ const Page = ({ params }: { params: { studentId: string } }) => {
   const studentId = params.studentId;
   const router = useRouter();
   const [club, setClub] = useState<IClub>();
-  const [facultyAdv, setFacultyAdv] = useState<IFacultyAdv>();
+  const [facultyAdv, setFacultyAdv] = useState<IFacultyAdv| null>();
   const [facultyAdvCreated, setFacultyAdvCreated] = useState(false);
   const [formData, setFormData] = useState<IFacultyAdv>({
+    facultyAdvId:'',
     facultyAdvName: '',
     facultyAdvUid: '',
   });
@@ -74,6 +79,7 @@ const Page = ({ params }: { params: { studentId: string } }) => {
           if (jsonClub?.facultyAdvUid && jsonClub?.facultyAdvId && jsonClub?.facultyAdvName) {
             setFacultyAdvCreated(true);
             setFacultyAdv({
+              facultyAdvId:jsonClub.facultyAdvId,
               facultyAdvName: jsonClub.facultyAdvName,
               facultyAdvUid: jsonClub.facultyAdvUid,
             });
@@ -117,6 +123,8 @@ const Page = ({ params }: { params: { studentId: string } }) => {
 
       setFacultyAdvCreated(true);
       setFacultyAdv({
+        
+        facultyAdvId:jsonUser._id,
         facultyAdvName: formData.facultyAdvName,
         facultyAdvUid: formData.facultyAdvUid,
       });
@@ -132,8 +140,38 @@ const Page = ({ params }: { params: { studentId: string } }) => {
     }
   };
 
+  const [open, setOpen] = useState(false);
+   const [loading, setLoading] = useState(false);
+   
+   const onDelete = async () => {
+    const toastId=toast.loading("processing...")
+    try {
+        setLoading(true);
+        const deleteFacultyAdvresponse=await deleteFacultyAdvisor(new mongoose.Types.ObjectId(facultyAdv?.facultyAdvId));
+        console.log("this is delete response",deleteFacultyAdvresponse); 
+        toast.success("deleted successfully");
+        setFacultyAdvCreated(false);
+        setFacultyAdv(null);
+
+    } catch (error: any) {
+      console.log("this is error : ",error);
+      toast.error("error occured ! try again");
+    } finally {
+      setLoading(false);
+      setOpen(false);
+      toast.dismiss(toastId);
+      
+    }
+  };
+
   return (
     <div>
+      <AlertModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={onDelete}
+        loading={loading}
+      /> 
       <Sheet>
         <SheetTrigger asChild>
           <div className="py-6 px-6">
@@ -170,7 +208,12 @@ const Page = ({ params }: { params: { studentId: string } }) => {
         <div className='w-full flex justify-end px-10'>
           <Dialog>
             <DialogTrigger asChild>
-              <Button>Create faculty advisor</Button>
+            <Button>
+                                <div className='flex justify-center items-center gap-2'>
+                                    <IoAddOutline className='text-xl'/>
+                                    <p>Create Faculty Advisor</p>
+                                </div>
+                                </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -219,17 +262,49 @@ const Page = ({ params }: { params: { studentId: string } }) => {
       )}
 
       {facultyAdvCreated && (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden px-10">
-          <div className="p-4 ">
-            <h2 className="text-xl font-bold mb-5">{facultyAdv?.facultyAdvName}</h2>
-            <h2 className="text-md mb-5">{facultyAdv?.facultyAdvUid}</h2>
-            <div className="flex gap-5 justify-end">
-              <Button size="sm">Edit</Button>
-              <Button size="sm">Delete</Button>
-            </div>
-          </div>
+
+     
+    <section className="w-full py-12 md:py-24 lg:py-32">
+      <div className="container px-4 md:px-6">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold tracking-tight">Faculty Advisor</h1>
+         
         </div>
-      )}
+        <div className="border rounded-lg overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>UID</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell>{facultyAdv?.facultyAdvUid}</TableCell>
+                <TableCell>{facultyAdv?.facultyAdvName}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    <Button variant="outline" size="sm" onClick={()=>{
+                      router.push(`/dashboard/studentRepresentative/${studentId}/facultyAdvisor/${facultyAdv?.facultyAdvId}`);
+                    }}>
+                      Edit
+                    </Button>
+                    <Button variant="destructive" size="sm" onClick={() => setOpen(true)}>
+                      Delete
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+              
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    </section>
+  )
+}
+     
     </div>
   )
 }

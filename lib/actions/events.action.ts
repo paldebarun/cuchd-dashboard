@@ -101,3 +101,29 @@ export async function fetchEventById(_id:mongoose.Types.ObjectId){
     console.log("error while fetching event by Id is : ",error);
   }
 }
+
+export async function fetchUnvefeaturedEvent(){
+  try{
+  await connectToDb();
+  const events=await Event.find({feature:false});
+
+  return JSON.stringify(events);
+
+  }
+  catch(error){
+    console.log("there has been error while fetching unfeatured events")
+  }
+}
+
+export async function fetchUnhighlightedEvent(){
+  try{
+  await connectToDb();
+  const events=await Event.find({feature:true});
+
+  return JSON.stringify(events);
+
+  }
+  catch(error){
+    console.log("there has been error while fetching unfeatured events")
+  }
+}

@@ -10,26 +10,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 export type Events = {
-    _id: string;
-    eventName: string;
-    description: string;
-    organizer: string;
-    date: string;
-    approved: boolean;
-    club: {
-      clubName: string;
-    };
-  };
-// import { deleteEventById } from "@/lib/actions/events.action";
-
-// import { AlertModal } from "@/components/alert-modal";
-// import { useState } from "react";
-// import mongoose from "mongoose";
-// import toast from "react-hot-toast";
-
+  _id: string;
+  eventName: string;
+  description: string;
+  organizer: string;
+  date: string;
+  approved:boolean;
+};
+import { deleteEventById } from "@/lib/actions/events.action";
+import { updateEventById } from "@/lib/actions/events.action";
+import { AlertModal } from "@/components/alert-modal";
+import { useState } from "react";
+import mongoose from "mongoose";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export const columns: ColumnDef<Events>[] = [
 
@@ -39,11 +35,6 @@ export const columns: ColumnDef<Events>[] = [
     header: "Event name",
   },
   {
-    accessorKey: "club.clubName",
-    header: "Club",
-  },
-
-  {
     accessorKey: "description",
     header: "Event description",
   },
@@ -51,7 +42,6 @@ export const columns: ColumnDef<Events>[] = [
     accessorKey: "organizer",
     header: "Organizer",
   },
-
   
   {
     accessorKey: "date",
@@ -70,38 +60,35 @@ export const columns: ColumnDef<Events>[] = [
 
       const handleOpenClick = () => {
         console.log("Open clicked for Event:", event);
-   
-          console.log("Open clicked for Event:", event);
-          router.push(`/dashboard/centralOffice/AllEvents/${event._id}`);
-      
+        router.push(`/dashboard/centralOffice/HighlightedEvents/${event._id}`);
       };
 
-     
+    
 
-    //   const [open, setOpen] = useState(false);
-    //   const [loading, setLoading] = useState(false);
+      // const [open, setOpen] = useState(false);
+      // const [loading, setLoading] = useState(false);
+      
+      
 
-    //   const onConfirm = async () => {
-    //     const toastId=toast.loading("deleting...");
-
-    //     try {
+      // const onConfirm = async () => {
+      //   const toastId=toast.loading("deleting...");
+        
+      //   try {
             
-    //       const deletedEvent=await deleteEventById(new mongoose.Types.ObjectId(event._id));
-    //       console.log("this id delete response : ",deletedEvent);
-    //       toast.dismiss(toastId);
-    //       toast.success("successfully deleted");
+      //     const deletedEvent=await deleteEventById(new mongoose.Types.ObjectId(event._id));
+      //     console.log("this id delete response : ",deletedEvent);
+      //     toast.dismiss(toastId);
+      //     toast.success("successfully deleted");
 
-    //     } catch (error) {
-    //      toast.dismiss(toastId);
-    //      toast.error("can't be deleted");
-    //      console.log("there has been an error : ",error);
-    //     } finally {
-    //       setOpen(false);
-    //       setLoading(false);
-    //     }
-    //   };
-
-
+      //   } catch (error) {
+      //    toast.dismiss(toastId);
+      //    toast.error("can't be deleted");
+      //    console.log("there has been an error : ",error);
+      //   } finally {
+      //     setOpen(false);
+      //     setLoading(false);
+      //   }
+      // };
       return (
         <div>
 
@@ -123,9 +110,9 @@ export const columns: ColumnDef<Events>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem onClick={handleOpenClick}>Open</DropdownMenuItem>
             <DropdownMenuSeparator />
-            {/* <DropdownMenuItem>Edit</DropdownMenuItem>
+           
             
-                <DropdownMenuItem onClick={() => setOpen(true)}>Delete</DropdownMenuItem> */}
+                
               
           </DropdownMenuContent>
         </DropdownMenu>

@@ -89,3 +89,15 @@ export async function deleteEventById(_id:mongoose.Types.ObjectId){
         console.log("error occurred while updating the event", error);
     }
 }
+
+export async function fetchEventById(_id:mongoose.Types.ObjectId){
+  try{
+     await connectToDb();
+     const event=await Event.findById(_id);
+
+     return JSON.stringify(event);
+  }
+  catch(error){
+    console.log("error while fetching event by Id is : ",error);
+  }
+}

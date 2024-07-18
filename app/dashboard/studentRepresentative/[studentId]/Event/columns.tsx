@@ -25,9 +25,9 @@ import { AlertModal } from "@/components/alert-modal";
 import { useState } from "react";
 import mongoose from "mongoose";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
-
-export const columns: ColumnDef<Events>[] = [
+export const columns=(studentId: string): ColumnDef<Events>[] => [
 
    
   {
@@ -56,18 +56,20 @@ export const columns: ColumnDef<Events>[] = [
     cell: ({ row }) => {
       const event = row.original;
 
+      const router=useRouter();
+
       const handleOpenClick = () => {
         console.log("Open clicked for Event:", event);
-        
+        router.push(`/dashboard/studentRepresentative/${studentId}/Event/${event._id}`)
       };
 
-     
+    
 
       const [open, setOpen] = useState(false);
       const [loading, setLoading] = useState(false);
       const onConfirm = async () => {
         const toastId=toast.loading("deleting...");
-
+        
         try {
             
           const deletedEvent=await deleteEventById(new mongoose.Types.ObjectId(event._id));

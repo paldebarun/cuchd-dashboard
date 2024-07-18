@@ -394,7 +394,7 @@ const Page = ({ params }: { params: { studentId: string } }) => {
           </DialogContent>
         </Dialog>
       </div>
-      <DataTable columns={columns} data={events} />
+      <DataTable columns={columns(studentId)} data={events}  />
     </div>
   );
 };

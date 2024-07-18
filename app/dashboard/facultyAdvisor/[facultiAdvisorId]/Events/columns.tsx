@@ -29,7 +29,7 @@ import mongoose from "mongoose";
 import toast from "react-hot-toast";
 import { updateEventById } from "@/lib/actions/events.action";
 
-export const columns: ColumnDef<Events>[] = [
+export const columns=(facultiAdvisorId:string): ColumnDef<Events>[] => [
   
  
    
@@ -61,7 +61,7 @@ export const columns: ColumnDef<Events>[] = [
 
       const router=useRouter();
 
-      const handleOpenClick = async() => {
+      const handleApprove = async() => {
         console.log("Open clicked for Event:", event);
         try{
          const updatedEvent=await updateEventById(new mongoose.Types.ObjectId(event._id),{
@@ -104,6 +104,11 @@ export const columns: ColumnDef<Events>[] = [
       
 
      
+      function handleOpenClick() {
+        router.push(`/dashboard/facultyAdvisor/${facultiAdvisorId}/Events/${event._id}`)
+        
+      }
+
       return (
         <div>
 
@@ -117,7 +122,8 @@ export const columns: ColumnDef<Events>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={handleOpenClick}>Approve</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleOpenClick}>View Event</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleApprove}>Approve</DropdownMenuItem>
             <DropdownMenuItem onClick={rejectEvent}>Reject</DropdownMenuItem>
             <DropdownMenuSeparator />
             

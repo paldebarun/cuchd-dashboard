@@ -38,7 +38,7 @@ const page = ({params}:{params:{facultiAdvisorId:string}}) => {
   return (
     <div>
 
-    <DataTable columns={columns} data={events} />
+    <DataTable columns={columns(facultyAdvisorId)} data={events} />
     </div>
   )
 }

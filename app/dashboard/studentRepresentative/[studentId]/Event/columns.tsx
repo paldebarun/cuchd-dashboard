@@ -60,7 +60,7 @@ export const columns=(studentId: string): ColumnDef<Events>[] => [
 
       const handleOpenClick = () => {
         console.log("Open clicked for Event:", event);
-        router.push(`/dashboard/studentRepresentative/${studentId}/Event/${event._id}`)
+        router.push(`/dashboard/studentRepresentative/${studentId}/Event/${event._id}`);
       };
 
     

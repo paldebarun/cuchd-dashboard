@@ -6,9 +6,9 @@ import mongoose from "mongoose"
 import { iEvent } from "@/model/event.model"
 import { format } from "date-fns"
 
-export default function Page({params}:{params:{eventId:string}}) {
+export default function Page({params}:{params:{facultyAdvisorId:string}}) {
 
-    const eventId=params.eventId;
+    const eventId=params.facultyAdvisorId;
     const [event,setEvent]=useState<iEvent>();
 
     useEffect(() => {

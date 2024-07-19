@@ -127,3 +127,42 @@ export async function fetchUnhighlightedEvent(){
     console.log("there has been error while fetching unfeatured events")
   }
 }
+
+
+
+
+
+function getLastDateOfPreviousMonth(): Date {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 0);
+}
+
+export async function fetchClubsOfEventsUntilNow() {
+  try {
+    await connectToDb();
+    const lastDateOfPreviousMonth = getLastDateOfPreviousMonth();
+
+   
+    const eventsTillLastMonth = await Event.find({
+      date: { $lt: lastDateOfPreviousMonth }
+    }).populate('club');
+
+   
+    const eventsTillToday = await Event.find({
+      date: { $lt: new Date() }
+    }).populate('club');
+
+    const combinedEvents = [...eventsTillLastMonth, ...eventsTillToday];
+
+   
+    const uniqueClubs = Array.from(new Set(
+      combinedEvents
+        .filter(event => event.club !== null)
+        .map(event => event.club._id.toString())
+    )).map(id => combinedEvents.find(event => event.club && event.club._id.toString() === id)?.club);
+
+    return JSON.stringify(uniqueClubs);
+  } catch (error) {
+    console.log("there was an error while fetching clubs of events until now", error);
+  }
+}

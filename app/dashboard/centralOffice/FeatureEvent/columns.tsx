@@ -10,24 +10,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
+import { iEvent } from "@/model/event.model";
 
-export type Events = {
-  _id: string;
-  eventName: string;
-  description: string;
-  organizer: string;
-  date: string;
-  approved:boolean;
-};
-import { deleteEventById } from "@/lib/actions/events.action";
+// import { deleteEventById } from "@/lib/actions/events.action";
 import { updateEventById } from "@/lib/actions/events.action";
-import { AlertModal } from "@/components/alert-modal";
-import { useState } from "react";
-import mongoose from "mongoose";
+// import { AlertModal } from "@/components/alert-modal";
+// import { useState } from "react";
+// import mongoose from "mongoose";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
-export const columns: ColumnDef<Events>[] = [
+export const columns: ColumnDef<iEvent>[] = [
 
    
   {
@@ -71,7 +64,7 @@ export const columns: ColumnDef<Events>[] = [
       const handleFeatureEvent=async ()=>{
         const toastId=toast.loading("featuring event...");
         try{
-         const updateEventResponse=await updateEventById(new mongoose.Types.ObjectId(event._id),{feature:true});
+         const updateEventResponse=await updateEventById(event._id,{feature:true});
 
          toast.success("event featured successfully");
          

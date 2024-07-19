@@ -80,10 +80,16 @@ export async function deleteEventById(_id:mongoose.Types.ObjectId){
     }
   }
 
-  export async function updateEventById(_id: mongoose.Types.ObjectId, data: Partial<iEvent>) {
+  export async function updateEventById(_id: string | unknown, data: Partial<iEvent>) {
     try {
         await connectToDb();
-        const updatedEvent = await Event.findByIdAndUpdate(_id, data, { new: true }).exec();
+
+        if(typeof _id!=="string"){
+          throw new Error("invalid id");
+          
+        }
+
+        const updatedEvent = await Event.findByIdAndUpdate(new mongoose.Types.ObjectId(_id), data, { new: true }).exec();
         return JSON.stringify(updatedEvent);
     } catch (error) {
         console.log("error occurred while updating the event", error);

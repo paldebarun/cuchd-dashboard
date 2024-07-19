@@ -48,7 +48,7 @@ const Page = () => {
             const toastid = toast.loading("Loading active club details...");
             try {
                 const clubData = await fetchClubsOfEventsUntilNow();
-                console.log("this is club fetch response : ",clubData);
+                console.log("this is club fetch response : ",clubData) ;
                 if (clubData) {
                     const parsedData = JSON.parse(clubData) as IClub[];
                     setData(parsedData);

@@ -58,16 +58,22 @@ export async function fetchClubDetails(){
 
 }
 
-export async function deleteClubById(_id:mongoose.Types.ObjectId){
+export async function deleteClubById(_id:string | unknown){
   try{
    await connectToDb();
+   if (typeof _id !== "string") {
+    throw new Error("Invalid type of id");
+  }
 
-   const deletedClub=await Club.findByIdAndDelete(_id).exec();
+
+
+   
+   const deletedClub=await Club.findByIdAndDelete(new mongoose.Types.ObjectId(_id)).exec();
 
 
    return JSON.stringify(deletedClub);
 
-
+   
   }
   catch(error){
     console.log("error occured while deleting the club",error);

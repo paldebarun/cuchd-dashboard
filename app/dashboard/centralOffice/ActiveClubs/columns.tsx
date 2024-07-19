@@ -10,15 +10,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
+import { IClub } from "@/model/club.model";
 
-export type Clubs = {
-  _id: string;
-  clubName: string;
-  studentRepName: string;
-  studentRepEmail: string;
-  studentRepUid: string;
-  createdAt: string;
-};
+
 import { deleteClubById } from "@/lib/actions/club.action";
 
 import { AlertModal } from "@/components/alert-modal";
@@ -26,7 +20,7 @@ import { useState } from "react";
 import mongoose from "mongoose";
 import toast from "react-hot-toast";
 
-export const columns: ColumnDef<Clubs>[] = [
+export const columns: ColumnDef<IClub>[] = [
 
    
   {
@@ -53,7 +47,7 @@ export const columns: ColumnDef<Clubs>[] = [
     id: "actions",
     cell: ({ row }) => {
       const club = row.original;
-
+      console.log("this is club : ",typeof club._id);
       const handleOpenClick = () => {
         console.log("Open clicked for club:", club);
         
@@ -67,8 +61,8 @@ export const columns: ColumnDef<Clubs>[] = [
         const toastId=toast.loading("deleting...");
 
         try {
-            
-          const deletedClub=await deleteClubById(new mongoose.Types.ObjectId(club._id));
+            const clubId=club._id;
+          const deletedClub=await deleteClubById(clubId);
           console.log("this id delete response : ",deletedClub);
           toast.dismiss(toastId);
           toast.success("successfully deleted");

@@ -11,18 +11,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { iEvent } from "@/model/event.model";
 
-export type Events = {
-    _id: string;
-    eventName: string;
-    description: string;
-    organizer: string;
-    date: string;
-    approved: boolean;
-    club: {
-      clubName: string;
-    };
-  };
 // import { deleteEventById } from "@/lib/actions/events.action";
 
 // import { AlertModal } from "@/components/alert-modal";
@@ -31,7 +21,7 @@ export type Events = {
 // import toast from "react-hot-toast";
 
 
-export const columns: ColumnDef<Events>[] = [
+export const columns: ColumnDef<iEvent>[] = [
 
    
   {

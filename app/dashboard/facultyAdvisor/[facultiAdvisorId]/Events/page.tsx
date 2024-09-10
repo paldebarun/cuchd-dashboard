@@ -6,8 +6,8 @@ import mongoose from 'mongoose';
 import { DataTable } from './data-table';
 import { columns } from './columns';
 
-const page = ({params}:{params:{facultiAdvisorId:string}}) => {
-  const router=useRouter();
+const Page = ({params}:{params:{facultiAdvisorId:string}}) => {
+
   const facultyAdvisorId= params.facultiAdvisorId;
   const [events,setEvents]=useState([]);
   
@@ -43,4 +43,4 @@ const page = ({params}:{params:{facultiAdvisorId:string}}) => {
   )
 }
 
-export default page
+export default Page
